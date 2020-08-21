@@ -1,34 +1,82 @@
 import React, { Component } from 'react'
 
-import Movies from './components/Movies'
+import MovieDetails from './components/MovieDetails'
+import Search from './components/Search'
 
-class DidUpdate extends Component {
+class App extends Component {
   state = {
-    id: 100
+    movies: [],
+    isFetching: false,
+movie: '',
+    search: false
   }
 
-  aumentar = () => {
-    this.setState(state => ({
-      id: state.id + 1
-    }))
+  // aumentar = () => {
+  //   let id = Math.floor(Math.random() * (this.state.max - this.state.min) + this.state.max)
+  //   this.setState({id})
+  // }
+
+  // componentDidMount () { 
+  //   let id = Math.floor(Math.random() * (this.state.max - this.state.min) + this.state.max)
+  //   this.setState({id})
+  // }
+
+
+  myChangeHandler = (event) => {
+
+    this.setState({
+      [event.target.name]: event.target.value
+    });
   }
+
+  setSearch = () => {
+      this.setState({
+        isFetching: true
+      })
+
+      // const URL = `https://api.themoviedb.org/3/movie/${this.props.movieId}?api_key=f1eef2ee60f5fa6ef35fcfe1806367fe` 
+      const URL = `https://api.themoviedb.org/3/search/movie?api_key=f1eef2ee60f5fa6ef35fcfe1806367fe&query=${this.state.movie}`
+      fetch(URL)
+        .then(res => res.json())
+        .then(movies => this.setState({
+          movies: movies.results,
+          isFetching: false
+        }))
+    }
 
   render () {
-    const { id } = this.state
+    const { movies, isFetching} = this.state
     return (
-      <div>
-        <h1>componentDidUpdate</h1>
-        <h2>ID: { id }</h2>
-        <button onClick={this.aumentar}>
-          Aumentar
-        </button>
-        <Movies
-          movieId={id}
-        />
+      <div className="container">
+          <h1 className="text-center">Peliculas</h1>
+          <Search
+            myChangeHandler={this.myChangeHandler}
+            setSearch={this.setSearch}
+
+          />
+        <div>
+        { isFetching 
+          ? 
+            <div className="d-flex align-items-center">
+              <strong>Loading...</strong>
+              <div className="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+            </div>
+          : 
+            <div className="d-flex flex-row flex-wrap justify-content-center">
+            {movies && 
+              movies.map(film => (
+                <MovieDetails 
+                  key={film.id}
+                  film={film} />
+              ))
+            }
+          </div>
+        }
+      </div>
       </div>
     )
   }
 }
 
-export default DidUpdate
+export default App
 
