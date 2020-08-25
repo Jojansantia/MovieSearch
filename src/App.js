@@ -11,17 +11,23 @@ class App extends Component {
     movie: '',
     search: false,
     genres: [],
+    populars: [],
     msg: false
   }
 
   componentDidMount () {
     const urlGenres = `https://api.themoviedb.org/3/genre/movie/list?api_key=f1eef2ee60f5fa6ef35fcfe1806367fe&language=en-US`
-
+    const urlPopulars = 'https://api.themoviedb.org/3/movie/popular?api_key=f1eef2ee60f5fa6ef35fcfe1806367fe&page=1'
+    
     fetch(urlGenres)
       .then(res => res.json())
       .then(genres => this.setState({
         genres: genres,
-        isFetching: false
+      }))
+    fetch(urlPopulars)
+      .then(res => res.json())
+      .then(populars => this.setState({
+        populars: populars.results,
       }))
   }
 
@@ -56,11 +62,11 @@ class App extends Component {
 
   render () {
 
-    const { msg, movies, genres, isFetching} = this.state
+    const { msg, populars, movies, genres, isFetching} = this.state
 
     return (
-      <div className="container" >
-          <h1 className="text-center">Movies</h1>
+      <div className="container p-4" >
+          <h1 className="text-center" onClick={() => this.setState({movies: []})}>Movie Search</h1>
           {msg && 
             <div className="alert alert-warning alert-dismissible fade show" role="alert">
               <strong>¡Error! </strong> Introduce a movie.
@@ -72,23 +78,35 @@ class App extends Component {
 
           />
         <div>
-          { isFetching 
-            ? 
-              <div className="d-flex align-items-center">
-                <strong>Loading...</strong>
-                <div className="spinner-border ml-auto" role="status" aria-hidden="true"></div>
-              </div>
-            : 
-              <div className="d-flex flex-row flex-wrap justify-content-center">
-              {movies && 
-                movies.map(film => (
-                  <MovieDetails 
-                    key={film.id}
-                    genres={genres}
-                    film={film} />
-                ))
-              }
+
+          { isFetching ? 
+            <div className="d-flex align-items-center">
+              <strong>Loading...</strong>
+              <div className="spinner-border ml-auto" role="status" aria-hidden="true"></div>
             </div>
+          : 
+            <>
+              <h2 className="text-center">{movies.length === 0 ? 'Populares' : 'Movies'}</h2>
+              <div className="d-flex flex-row flex-wrap justify-content-center">
+                {movies.length !== 0 ?
+                  movies.map(film => (
+                    <MovieDetails 
+                      key={film.id}
+                      genres={genres}
+                      film={film} />
+                  ))
+                : 
+                  (populars && 
+                    populars.map(film => (
+                      <MovieDetails 
+                        key={film.id}
+                        genres={genres}
+                        film={film} />
+                    ))
+                  )
+                }
+              </div>
+            </>
           }
         </div>
       </div>

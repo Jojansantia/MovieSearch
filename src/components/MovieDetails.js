@@ -30,7 +30,7 @@ export default class MovieDetails extends Component {
 
     return (
       <>
-        <div className="card m-1" style={{width: '18rem'}}>
+        <div className="card m-1 shadow" style={{width: '18rem'}}>
           <img src= {film.poster_path ? `https://image.tmdb.org/t/p/original${film.poster_path}` : imgDefault } className="card-img-top" alt={film.original_title} />
           <div className="card-body text-center">
             <h5 className="card-title">{film.original_title}</h5>
