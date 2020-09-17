@@ -12,12 +12,13 @@ class App extends Component {
     search: false,
     genres: [],
     populars: [],
-    msg: false
+    msg: false,
+    API_KEY : process.env.REACT_APP_API_KEY
   }
 
   componentDidMount () {
-    const urlGenres = `https://api.themoviedb.org/3/genre/movie/list?api_key=f1eef2ee60f5fa6ef35fcfe1806367fe&language=en-US`
-    const urlPopulars = 'https://api.themoviedb.org/3/movie/popular?api_key=f1eef2ee60f5fa6ef35fcfe1806367fe&page=1'
+    const urlGenres = `https://api.themoviedb.org/3/genre/movie/list?api_key=${this.state.API_KEY}&language=en-US`
+    const urlPopulars = `https://api.themoviedb.org/3/movie/popular?api_key=${this.state.API_KEY}&page=1`
     
     fetch(urlGenres)
       .then(res => res.json())
@@ -49,7 +50,7 @@ class App extends Component {
         isFetching: true
       })
 
-      const urlMovies = `https://api.themoviedb.org/3/search/movie?api_key=f1eef2ee60f5fa6ef35fcfe1806367fe&query=${this.state.movie}` 
+      const urlMovies = `https://api.themoviedb.org/3/search/movie?api_key=${this.state.API_KEY}&query=${this.state.movie}` 
       fetch(urlMovies)
         .then(res => res.json())
         .then(movies => this.setState({
